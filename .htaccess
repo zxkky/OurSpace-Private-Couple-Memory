@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Kalau request menunjuk ke file atau folder yang BENERAN ada di disk
+    # (contoh: /uploads/foto.jpg, /favicon.ico) -> serve apa adanya,
+    # jangan diarahkan ke router PHP.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Selain itu (route aplikasi seperti /login, /dashboard, /albums/1, dst)
+    # semua diarahkan ke front controller.
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Cegah orang mengakses file konfigurasi/skema langsung lewat browser
+<FilesMatch "^(config|db|bootstrap|helper|auth|routes)\.php$">
+    Require all denied
+</FilesMatch>
+<Files "schema.sql">
+    Require all denied
+</Files>
